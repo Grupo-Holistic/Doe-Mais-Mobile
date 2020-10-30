@@ -237,7 +237,7 @@ function MainScreen(){
 function TelaLogin(){
   
   //hooks de navegação e states para capturar dados de usuário e senha
-  const navigation = useNavigation();
+  const navigation = useNavigation();  
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
   const [loading,setLoading] = useState(false);
@@ -294,9 +294,7 @@ function showMessage(message){
           console.log(result)
           showMessage(result['error'])
         }
-
         setLoading(false);
-
       }
       )
     }).catch(function(error){
@@ -358,13 +356,14 @@ function showMessage(message){
   );
 }
 //tela de detalhes
-function Cadastro(){
-  
-var obj = {
-    nome: 'Usuario',
-    sobrenome: 'FIAP'
-  }
-
+function Cadastro(){  
+  const [hospitalId, setHospitalId] = useState('');
+  const [tipo, setTipo] = useState('');
+  const [user, setUser] = useState('');
+  const [login, setLogin] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading,setLoading] = useState(false);
+  //var id  = parseint(setHospitalId)
   //chamada do objeto para gerir a navegação
   const navigation = useNavigation();
   
@@ -372,47 +371,36 @@ var obj = {
     <View>
        <TextInput
       style={styles.input}
-      placeholder="Nome"
+      placeholder="Hospital"
       autoCorrect={false}
-      onChangeText={()=>{}}
-      />
+      onChangeText={(value) => setHospitalId(value)}/>  
 
       <TextInput
       style={styles.input}
-      placeholder="E-mail"
+      placeholder="Função"
       autoCorrect={false}
-      onChangeText={()=>{}}
-      />
+      onChangeText={(value) => setTipo(value)}/>  
 
       <TextInput
       style={styles.input}
-      placeholder="RG"
+      placeholder="Email"
       autoCorrect={false}
-      onChangeText={()=>{}}
-      />
+      onChangeText={(value) => setUser(value)}/>  
 
       <TextInput
       style={styles.input}
-      placeholder="CPF"
+      placeholder="Login"
       autoCorrect={false}
-      onChangeText={()=>{}}
-      />
+      onChangeText={(value) => setLogin(value)}/>  
 
       <TextInput
       style={styles.input}
-      placeholder="Especialidade"
+      placeholder="Senha"
       autoCorrect={false}
-      onChangeText={()=>{}}
-      />
+      onChangeText={(value) => setPassword(value)}/>  
 
-      <TextInput
-      style={styles.input}
-      placeholder="CRM"
-      autoCorrect={false}
-      onChangeText={()=>{}}
-      />
 
-     <TouchableOpacity  onPress={() => cadastrar(changeUser, changeToken, changeNav)}
+     <TouchableOpacity  onPress={() => checkCadastrar()}
           style={styles.btnentrar}>      
           <Text style={styles.btnentrartxt}>Cadastrar</Text>
         </TouchableOpacity>
@@ -425,43 +413,42 @@ var obj = {
     </View>
   );
 
-  function checkPost(changeUser, changeToken, changeNav){
+  function checkCadastrar(){
 
     //objeto que será passado pelo navigation
-    var obj = {
-      user: user,
-      token: '',
+    var obj = {      
+      HospitalId: hospitalId,
+      Tipo: tipo,
+      Email: user,
+      Login: login,
+      Senha: password,      
     }
 
     setLoading(true);
     
-    fetch('http://192.168.0.104:5000/api/usuario/login',{
+    fetch('http://192.168.0.104:5000/api/usuario/cadastrar',{
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
+      body: JSON.stringify({        
+        HospitalId: parseInt(hospitalId),
+        Tipo: tipo,
         Email: user,
+        Login: login,
         Senha: password,
+
       }),
     }).then((response)=> {
       response.json().then((result) => {
         //aqui é analisada a resposta
 
-        if(response.status === 200){
-          obj.token = result['token']
-
-          //atualizando o contexto
-          changeUser(user)
-          changeToken(result['token'])
-          changeNav(navigation)
-
+        if(response.status === 201){
           navigation.navigate('Main',obj)
         }
         else{
-          console.log(result)
-          showMessage(result['error'])
+          console.log(result)          
         }
 
         setLoading(false);
@@ -488,27 +475,20 @@ class App extends Component {
       token: 'token',
       navigation: null
     }
-
     this.setUser = this.setUser.bind(this);
     this.setToken = this.setToken.bind(this);
     this.setNav = this.setNav.bind(this);
-
   }
-
   setUser(usr){
     this.setState({userName: usr})
   }
-
   setToken(tk){
     this.setState({token: tk})
   }
-
   setNav(nav){
     this.setState({navigation: nav})
   }
-  
   render(){
-
     const loginValue = {
       user: this.state.userName,
       token: this.state.token,
@@ -519,7 +499,6 @@ class App extends Component {
     }
 
     return ( 
-
       <userContext.Provider value={loginValue}>
         <NavigationContainer>
           <Stack.Navigator initialRouteName="Login">
@@ -541,8 +520,7 @@ class App extends Component {
           </Stack.Screen>
           </Stack.Navigator>
         </NavigationContainer>
-      </userContext.Provider>
-      
+      </userContext.Provider>      
   );
   }
 } export default App
@@ -556,8 +534,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   paragraph: {
-    margin: 24,
-    
+    margin: 24,    
     fontWeight: 'bold',
     textAlign: 'left',
   },
@@ -572,8 +549,7 @@ const styles = StyleSheet.create({
     flex: 1,
     color: '#2c685c',
     fontFamily: 'sans-serif',
-    alignItems: 'center',    
-       
+    alignItems: 'center',           
   },
     img: {
     marginTop: 40,
@@ -585,40 +561,32 @@ const styles = StyleSheet.create({
     width: '40%',
     height: 35,
     alignItems: 'center',
-    justifyContent: 'center',
-    
+    justifyContent: 'center',    
     marginTop: 25,
     marginLeft: '30%',
 },
   btnentrartxt: {
     color: '#fff',
-
-   
   },
   btncadastrar: {
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 30
   },
-
   btncadastrartxt: {
     color: '#2c685c',
     fontFamily: 'sans-serif',
     fontWeight: 'bold',
-  
   },
   btncadastrartxt2: {
     color: '#2c685c',
     fontFamily: 'sans-serif',
     fontWeight: 'bold',
-   
   },
   input:{
   width: '90%',
   marginLeft: '5%',
   padding: 5,
-  
-  
   marginTop: 20,
 },
  btnvoltar:{
@@ -627,8 +595,7 @@ const styles = StyleSheet.create({
     width: '10%',
     height: 35,
     alignItems: 'center',
-    justifyContent: 'center',
-    
+    justifyContent: 'center',    
     marginTop: 30,
     marginLeft: '5%',
   },
@@ -638,15 +605,13 @@ const styles = StyleSheet.create({
     width: '30%',
     height: 35,
     alignItems: 'center',
-    justifyContent: 'center',
-    
+    justifyContent: 'center',    
     marginTop: 25,
     marginLeft: '5%', 
  },
  bg:{
    alignItems: 'center',
-   marginTop: 10,
-   
+   marginTop: 10,   
  },
  btnlogout:{
     color: '#fff',
