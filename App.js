@@ -40,7 +40,7 @@ function LogoSimple() {
 
   return (
     <View style={styles.titulo}>
-      <h1>Doe+</h1>
+      <Text>Doe+</Text>
     </View>
   );
 }
@@ -70,8 +70,8 @@ function LogoTitle() {
       <View style={{justifyContent: 'center', alignSelf: 'center'}}>
         <Text style={{
           textAlign: 'center',
-          marginTop: '-35px',
-          fontSize: '15px',
+          marginTop: -35,
+          fontSize: 15,
           fontFamily: 'sans-serif',
           color: '#2c685c'
           }}>Bem vindo {user}</Text>
@@ -124,8 +124,7 @@ return(
     <TouchableOpacity onPress={() => navigation.navigate('')}
           style={styles.logout}>      
           <Text style={styles.btnlogout}><Image
-          style={{ width: 23, height: 23 }}
-          source={require('./images/logoutVerde.png')}
+          style={{ width: 23, height: 23 }}          
         /></Text>
         </TouchableOpacity>
 
@@ -140,11 +139,7 @@ return(
       style={styles.buscar}>
         <Text style={styles.btnentrartxt}>Buscar</Text>      
       </TouchableOpacity>
-      <View style={styles.bg}>
-      <Image
-          style={{ width: 200, height: 200 }}
-          source={require('./images/skills.png')}
-        />
+      <View style={styles.bg}>      
     </View>
      
     </View>    
@@ -171,32 +166,6 @@ function TelaDetalhes() {
   );
 }
 
-//tela do usuario
-function TelaUsuario() {
-  
-  //objeto de controle de navegação
-  const navigation = useNavigation();
-
-  //objeto route para obter dados da tela anterior
-  const route = useRoute();
-
-  //fazendo o fetch do objeto recebido da tela anterior
-  const {nome} = route.params;
-  const {sobrenome} = route.params;
-  
-  return(
-    <View style={styles.container}>
-      <Text style={styles.paragraph}>Nome:{nome}</Text>
-      <Text style={styles.paragraph}>Sobrenome: {JSON.stringify(sobrenome)} </Text>
-      <Button
-        title='Voltar'
-        onPress={() => navigation.goBack()}
-      />
-    </View>
-  );
-}
-
-
 //stacks do App da aula anterior
 function AppStack(){
   return(
@@ -213,19 +182,9 @@ function AppStack(){
             options={{title: 'Tela de Detalhes'}}>
             {props => <TelaDetalhes />}
           </Stack.Screen>
-
-          <Stack.Screen
-            name='Usuario'
-            options={{title: 'Dados do Usuário'}}>
-            {props => <TelaUsuario />}
-          </Stack.Screen>
-
-
         </Stack.Navigator>
-
   );
 }
-
 
 //renderiza o tab e por sua vez as stacks
 function AppTabScreen({routeName}){
@@ -239,9 +198,7 @@ function AppTabScreen({routeName}){
             if (route.name === 'App') {
               iconName = 'ios-home';
             } 
-            else if (route.name === 'Options') {
-              iconName = focused ? 'ios-list-box' : 'ios-list';
-            }
+            
             else if (route.name === 'About') {
               iconName = focused ? 'ios-information-circle' :        'ios-information-circle-outline';
             }
@@ -255,9 +212,8 @@ function AppTabScreen({routeName}){
           inactiveTintColor: 'black',
         }}
       >
-
           <Tab.Screen name="App" component={AppStack}/>
-          <Tab.Screen name="Options" component={OptionsScreen}/>
+         
           <Tab.Screen name="About" component={AboutScreen}/>
 
         </Tab.Navigator>
@@ -270,9 +226,7 @@ function MainScreen(){
           <Drawer.Screen name="App">
              {props => <AppTabScreen routeName="App"/>} 
           </Drawer.Screen>
-          <Drawer.Screen name="Options">
-             {props => <AppTabScreen routeName="Options"/>} 
-          </Drawer.Screen>
+         
           <Drawer.Screen name="About">
              {props => <AppTabScreen routeName="About"/>} 
           </Drawer.Screen>
@@ -310,18 +264,17 @@ function showMessage(message){
       token: '',
     }
 
-
     setLoading(true);
-
-    fetch('http://localhost:5000/api/usuario/login',{
+    
+    fetch('http://192.168.0.104:5000/api/usuario/login',{
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        email: user,
-        senha: password,
+        Email: user,
+        Senha: password,
       }),
     }).then((response)=> {
       response.json().then((result) => {
@@ -344,80 +297,14 @@ function showMessage(message){
 
         setLoading(false);
 
-      })
+      }
+      )
+    }).catch(function(error){
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      throw error;
     })
   }
-//tela de detalhes
-function Cadastro(){
-  
-var obj = {
-    nome: 'Usuario',
-    sobrenome: 'FIAP'
-  }
 
-  //chamada do objeto para gerir a navegação
-  const navigation = useNavigation();
-  
-  return(
-    <View>
-       <TextInput
-      style={styles.input}
-      placeholder="Nome"
-      autoCorrect={false}
-      onChangeText={()=>{}}
-      />
-
-      <TextInput
-      style={styles.input}
-      placeholder="E-mail"
-      autoCorrect={false}
-      onChangeText={()=>{}}
-      />
-
-      <TextInput
-      style={styles.input}
-      placeholder="RG"
-      autoCorrect={false}
-      onChangeText={()=>{}}
-      />
-
-      <TextInput
-      style={styles.input}
-      placeholder="CPF"
-      autoCorrect={false}
-      onChangeText={()=>{}}
-      />
-
-      <TextInput
-      style={styles.input}
-      placeholder="Especialidade"
-      autoCorrect={false}
-      onChangeText={()=>{}}
-      />
-
-      <TextInput
-      style={styles.input}
-      placeholder="CRM"
-      autoCorrect={false}
-      onChangeText={()=>{}}
-      />
-
-     <TouchableOpacity onPress={this._postData} title="Post data"
-          style={styles.btnentrar}>   
-          <text>{this.state.text}</text>
-          <Text style={styles.btnentrartxt}>Cadastrar</Text>
-        </TouchableOpacity>
-      
-      
-
-      <TouchableOpacity onPress={() => navigation.goBack()}
-          style={styles.btnvoltar}>      
-          <Text style={styles.btnentrartxt}>←</Text>
-        </TouchableOpacity>
-    
-    </View>
-  );
-}
   return(
     <userContext.Consumer>
       {({user,token,nav,changeUser,changeToken,changeNav}) => (
@@ -433,7 +320,7 @@ var obj = {
         <TextInput
           autoCorrect={false}
           placeholder="Usuario"
-          clearButtonMode={true}
+          clearButtonMode={"while-editing"}
           style={styles.textInput}
           onChangeText={(value) => setUser(value)}/>       
 
@@ -441,7 +328,7 @@ var obj = {
           autoCorrect={false}
           secureTextEntry={true}
           placeholder="Senha"
-          clearButtonMode={true}
+          clearButtonMode={"while-editing"}
           style={styles.textInput}
           onChangeText={(value) => setPassword(value)}/>
 
@@ -461,8 +348,6 @@ var obj = {
           <Text style={styles.btncadastrartxt}>Não possui uma conta ?</Text>
           <Text style={styles.btncadastrartxt2}>Cadastrar</Text>
         </TouchableOpacity>
-
-     
       </View>
         </TouchableOpacity>
   
@@ -471,7 +356,6 @@ var obj = {
     )}
   </userContext.Consumer>
   );
-  
 }
 //tela de detalhes
 function Cadastro(){
@@ -528,7 +412,7 @@ var obj = {
       onChangeText={()=>{}}
       />
 
-     <TouchableOpacity onPress={() => navigation.navigate('Entrar',obj)}
+     <TouchableOpacity  onPress={() => cadastrar(changeUser, changeToken, changeNav)}
           style={styles.btnentrar}>      
           <Text style={styles.btnentrartxt}>Cadastrar</Text>
         </TouchableOpacity>
@@ -540,6 +424,56 @@ var obj = {
     
     </View>
   );
+
+  function checkPost(changeUser, changeToken, changeNav){
+
+    //objeto que será passado pelo navigation
+    var obj = {
+      user: user,
+      token: '',
+    }
+
+    setLoading(true);
+    
+    fetch('http://192.168.0.104:5000/api/usuario/login',{
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        Email: user,
+        Senha: password,
+      }),
+    }).then((response)=> {
+      response.json().then((result) => {
+        //aqui é analisada a resposta
+
+        if(response.status === 200){
+          obj.token = result['token']
+
+          //atualizando o contexto
+          changeUser(user)
+          changeToken(result['token'])
+          changeNav(navigation)
+
+          navigation.navigate('Main',obj)
+        }
+        else{
+          console.log(result)
+          showMessage(result['error'])
+        }
+
+        setLoading(false);
+
+      }
+      )
+    }).catch(function(error){
+      console.log('There has been a problem with your fetch operation: ' + error.message);
+      throw error;
+    })
+  }
+
 }
 
 //renderiza o navigation drawer
@@ -573,7 +507,6 @@ class App extends Component {
     this.setState({navigation: nav})
   }
   
-  
   render(){
 
     const loginValue = {
@@ -584,8 +517,6 @@ class App extends Component {
       changeToken:this.setToken,
       changeNav: this.setNav
     }
-
-
 
     return ( 
 
@@ -626,107 +557,103 @@ const styles = StyleSheet.create({
   },
   paragraph: {
     margin: 24,
-    fontSize: 18,
+    
     fontWeight: 'bold',
     textAlign: 'left',
   },
   textInput:{
-   
     width: '90%',
-    height: '35px',
-    padding: '5px',
-    border: '1px solid gray',
-    borderRadius: '5px',
+    height: 35,
+    padding: 5,
     marginLeft: '5%',
-    marginTop: '10px'
-    
+    marginTop: 10
   },  
   titulo:{
     flex: 1,
     color: '#2c685c',
     fontFamily: 'sans-serif',
     alignItems: 'center',    
-    fontSize: '13px',    
+       
   },
     img: {
-    marginTop: '40px',
+    marginTop: 40,
     alignItems: 'center',
   },
   btnentrar:{
     backgroundColor: '#2c685c',
     color: '#fff',
     width: '40%',
-    height: '35px',
+    height: 35,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: '5px',
-    marginTop: '25px',
+    
+    marginTop: 25,
     marginLeft: '30%',
 },
   btnentrartxt: {
     color: '#fff',
-    fontFamily: 'fantasy',
-    letterSpacing: '1px',
+
+   
   },
   btncadastrar: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: '30px'
+    marginTop: 30
   },
 
   btncadastrartxt: {
     color: '#2c685c',
     fontFamily: 'sans-serif',
     fontWeight: 'bold',
-    fontSize: '15px'
+  
   },
   btncadastrartxt2: {
     color: '#2c685c',
     fontFamily: 'sans-serif',
     fontWeight: 'bold',
-    fontSize: '17px'
+   
   },
   input:{
   width: '90%',
   marginLeft: '5%',
-  padding: '5px',
-  border: '1px solid gray',
-  borderRadius: '5px',
-  marginTop: '20px',
+  padding: 5,
+  
+  
+  marginTop: 20,
 },
  btnvoltar:{
     backgroundColor: '#2c685c',
     color: '#fff',
     width: '10%',
-    height: '35px',
+    height: 35,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: '5px',
-    marginTop: '30px',
+    
+    marginTop: 30,
     marginLeft: '5%',
   },
   buscar:{
    backgroundColor: '#2c685c',
     color: '#fff',
     width: '30%',
-    height: '35px',
+    height: 35,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: '5px',
-    marginTop: '25px',
+    
+    marginTop: 25,
     marginLeft: '5%', 
  },
  bg:{
    alignItems: 'center',
-   marginTop: '10px',
-   opacity: '0.3',   
+   marginTop: 10,
+   
  },
  btnlogout:{
     color: '#fff',
     fontFamily: 'sans-serif',
-    letterSpacing: '1px',
-    marginTop: '15px',
-    marginLeft: '15px'
+    
+    marginTop: 15,
+    marginLeft: 15
  },
  tituloCadastro:{
    textAlign: 'center'
